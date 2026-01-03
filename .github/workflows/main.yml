@@ -1,20 +1,30 @@
-image: Ubuntu1804
+name: Netology AHJ CI
 
-stack: node 16
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-branches:
-  only:
-    - main
+jobs:
+  check:
+    runs-on: ubuntu-latest
 
-cache: node_modules  # кеширование
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-install:
-  - npm install  # команда установки зависимостей
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
 
-build: off  # отключаем встроенную в appveyor систему сборки
+      - name: Install dependencies
+        run: npm install
 
-build_script:
-  - npm run build
+      - name: Lint
+        run: npm run lint
 
-test_script:
-  - npm run lint && npm test
+      - name: Test
+        run: npm test
